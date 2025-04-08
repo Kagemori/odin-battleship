@@ -1,0 +1,29 @@
+header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#menu {
+    display: flex;
+    flex-direction: column;
+}
+
+#gameboard-containers{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    grid-template-rows: 1fr;
+    gap:10px;
+}
+
+#p1-gameboard,#p2-gameboard {
+    display: grid;
+    grid-template-columns: repeat(10,1fr);
+    grid-template-rows: repeat(10,1fr);
+}
+
+.p1-tile,.p2-tile {
+    border: 1px solid black;
+    text-align: center;
+}
