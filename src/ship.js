@@ -16,3 +16,5 @@ class Ship{
         }
     }
 }
+
+export {Ship}

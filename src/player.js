@@ -1,3 +1,5 @@
+import { Gameboard } from "./gameboard.js";
+
 class Player{
     constructor(){
         this.name = "";
@@ -5,3 +7,5 @@ class Player{
         this.gameboard = new Gameboard();
     }
 }
+
+export {Player}
