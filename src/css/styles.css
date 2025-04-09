@@ -50,6 +50,12 @@ header {
     flex-direction: column;
 }
 
+.info-shipcontainer {
+    display: flex;
+    justify-content: space-between;
+    padding: 0px 15px;
+}
+
 #p1-gameboard {
     display: grid;
     grid-template-columns: repeat(10,1fr);

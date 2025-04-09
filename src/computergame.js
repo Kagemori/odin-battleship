@@ -3,38 +3,42 @@ import { Player } from "./player.js";
 let p1Board = document.querySelector("#p1-gameboard");
 let p2Board = document.querySelector("#p2-gameboard");
 
-function P1TileShipPlacer(index,ship,shipDirection,gameboard){
-    tile.addEventListener('click', (e) => {
-        e.preventDefault();
-
-        if(shipDirection == "x"){
-            if((index%10)+ship.length > 10){
-                return alert("Invalid placement!");
+function P1TileShipPlacer(ship,shipDirection,gameboard){
+    let p1Tiles = document.querySelectorAll("div.p1-tiles");
+    
+    for(let i = 0; i < p1Tiles.length; i++){
+        p1Tiles[i].addEventListener('click', (e) => {
+            e.preventDefault();
+    
+            if(shipDirection == "x"){
+                if((i%10)+ship.length > 10){
+                    return alert("Invalid placement!");
+                }else{
+                    for(let j = i; j < i+ship.length; j++){
+                        let board = gameboard.board[j];
+                        if(board.hasShip != false){
+                            return alert("Invalid placement! Overlapping with another ship!");
+                        }else{
+                            board.hasShip = ship;
+                        }
+                    }
+                }
             }else{
-                for(let i = index; i < index+ship.length; i++){
-                    let board = gameboard.board[i];
-                    if(board.hasShip != false){
-                        return alert("Invalid placement! Overlapping with another ship!");
-                    }else{
-                        board.hasShip = ship;
+                if((i%10)+ship.length > 10){
+                    return alert("Invalid placement!");
+                }else{
+                    for(let j = 0; j < ship.length; i++){
+                        let board = gameboard.board[i+(j*10)];
+                        if(board.hasShip != false){
+                            return alert("Invalid placement! Overlapping with another ship!");
+                        }else{
+                            board.hasShip = ship;
+                        }
                     }
                 }
             }
-        }else{
-            if((index%10)+ship.length > 10){
-                return alert("Invalid placement!");
-            }else{
-                for(let i = 0; i < ship.length; i++){
-                    let board = gameboard.board[index+(i*10)];
-                    if(board.hasShip != false){
-                        return alert("Invalid placement! Overlapping with another ship!");
-                    }else{
-                        board.hasShip = ship;
-                    }
-                }
-            }
-        }
-    })
+        })
+    }
 }
 
 function P1TileMaker(index){
@@ -57,9 +61,15 @@ function P1InfoPlacer(p1){
 
     let p1gameboard = p1.gameboard;
     let p1ships = p1gameboard.ships;
+    
 
     for(let i = 0; i < p1ships.length; i++) {
         P1InfoShipPlacer(p1ships[i].shipname);
+    }
+
+    let shipHealth = document.querySelectorAll(`.info-shiphealth`);
+    for(let i = 0; i < p1ships.length; i++) {
+        shipHealth[i].textContent = `${(p1ships[i].length - p1ships[i].sunk)} / ${p1ships[i].length}`;
     }
 }
 
@@ -90,11 +100,11 @@ function initCompGame(){
         P2TileMaker(i);
     }
 
-    initP1ShipPlacement();
+    initP1ShipPlacement(p1.gameboard);
 }
 
-function initP1ShipPlacement(){
-
+function initP1ShipPlacement(p1gameboard){
+    
 }
 
 export {initCompGame}
