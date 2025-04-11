@@ -50,6 +50,10 @@ header {
     flex-direction: column;
 }
 
+.p1-tileinfo {
+    font-size: 15px;
+}
+
 .info-shipcontainer {
     display: flex;
     justify-content: space-between;
