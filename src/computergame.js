@@ -83,7 +83,11 @@ function P1TileShipPlacer(ship,gameboard){
             }
 
             updateP1ShipPlacement(p1board);
-            checkP1BoardSet(p1board);
+            if(checkP1BoardSet(p1board)){
+                initStartGame();
+            }else{
+                console.log("Missing ships!");
+            };
         })
     }
 }
@@ -108,26 +112,38 @@ function P2TileMaker(index){
     p2Board.appendChild(tile);
 }
 
-function P1InfoPlacer(p1){
-    let infoName = document.querySelector("#p1-name");
-    infoName.textContent = p1.name;
-
-    let p1gameboard = p1.gameboard;
-    let p1ships = p1gameboard.ships;
-    
-
-    for(let i = 0; i < p1ships.length; i++) {
-        P1InfoShipPlacer(p1ships[i].shipname);
+function InfoPlacer(player){
+    if(player.playerType == "Human"){
+        let infoName = document.querySelector("#p1-name");
+        infoName.textContent = player.name;
+    }else{
+        let infoName = document.querySelector("#p2-name");
+        infoName.textContent = player.name;
     }
 
-    let shipHealth = document.querySelectorAll(`.info-shiphealth`);
-    for(let i = 0; i < p1ships.length; i++) {
-        shipHealth[i].textContent = `${(p1ships[i].length - p1ships[i].sunk)} / ${p1ships[i].length}`;
+    let gameboard = player.gameboard;
+    let ships = gameboard.ships;
+
+    for(let i = 0; i < ships.length; i++) {
+        InfoShipPlacer(ships[i].shipname,player);
+    }
+
+    if(player.playerType == "Human"){
+        let p1Ships = document.querySelector("#p1-ships");
+        let shipHealth = p1Ships.querySelectorAll(`.info-shiphealth`);
+        for(let i = 0; i < ships.length; i++) {
+            shipHealth[i].textContent = `${(ships[i].length - ships[i].sunk)} / ${ships[i].length}`;
+        }
+    }else{
+        let p1Ships = document.querySelector("#p2-ships");
+        let shipHealth = p1Ships.querySelectorAll(`.info-shiphealth`);
+        for(let i = 0; i < ships.length; i++) {
+            shipHealth[i].textContent = `? / ${ships[i].length}`;
+        }
     }
 }
 
-function P1InfoShipPlacer(inputName){
-    let infoShip = document.querySelector("#p1-ships");
+function InfoShipPlacer(inputName,player){
     let shipContainer = document.createElement('div');
     shipContainer.classList.add("info-shipcontainer");
     let shipName = document.createElement("div");
@@ -138,7 +154,14 @@ function P1InfoShipPlacer(inputName){
 
     shipContainer.appendChild(shipName);
     shipContainer.appendChild(shipHealth);
-    infoShip.appendChild(shipContainer);
+
+    if(player.playerType == "Human"){
+        let infoShip = document.querySelector("#p1-ships");
+        infoShip.appendChild(shipContainer);
+    }else{
+        let infoShip = document.querySelector("#p2-ships");
+        infoShip.appendChild(shipContainer);
+    }
 }
 
 function initCompGame(){
@@ -148,7 +171,12 @@ function initCompGame(){
     let p1gb = p1.gameboard;
     let board = p1gb.board;
 
-    P1InfoPlacer(p1);
+    let p2 = new Player();
+    p2.playerType = "Computer";
+    p2.name = "Q";
+
+    InfoPlacer(p1);
+    InfoPlacer(p2);
 
     for(let i = 0; i < 100; i++){
         let hasShip = board[i].hasShip;
@@ -163,10 +191,9 @@ function initCompGame(){
 function initShipPlacement(gameboard){
     let gbShip = gameboard.ships;
 
-    let infoSelect = document.querySelectorAll(".info-shipcontainer");
+    let p1InfoShips = document.querySelector("#p1-ships");
+    let infoSelect = p1InfoShips.querySelectorAll(".info-shipcontainer");
     let announcer = document.querySelector("#announcer");
-
-    console.log(infoSelect);
 
     for(let i = 0; i < infoSelect.length; i++){
         infoSelect[i].addEventListener('click', (e) => {
@@ -192,7 +219,6 @@ function removeShipPlacement(gbShip, board) {
 }
 
 function updateP1ShipPlacement(board) {
-    console.log(board);
 
     let p1GBDiv = document.querySelector("#p1-gameboard");
 
@@ -238,7 +264,9 @@ function checkP1BoardSet(board) {
         }
     }
     if(carr == true && bship == true && cruise == true && sub == true && dest == true){
-            initStartGame();
+            return true;
+    }else{
+        return false;
     }
 }
 

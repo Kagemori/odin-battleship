@@ -51,6 +51,8 @@ header {
 #p2-info {
     grid-column: 3;
     grid-row: 2;
+
+    text-align: center;
 }
 
 #p1-name, #p2-name {

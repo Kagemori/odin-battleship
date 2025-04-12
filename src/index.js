@@ -6,4 +6,7 @@ import { initCompGame } from "./computergame.js";
 
 let comp = document.querySelector("#comp-match");
 
-comp.addEventListener('click',initCompGame);
+comp.addEventListener('click', (e) => {
+    initCompGame();
+    comp.remove();
+});
