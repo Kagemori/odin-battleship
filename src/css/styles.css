@@ -13,7 +13,7 @@ header {
 #game {
     display: grid;
     grid-template-columns: 1fr 5fr 1fr;
-    grid-template-rows: 0.1fr 1fr;
+    grid-template-rows: 0.1fr 1fr 0.1fr;
 
     align-items: center;
 }
@@ -86,6 +86,21 @@ header {
     grid-template-columns: repeat(10,1fr);
     grid-template-rows: repeat(10,1fr);
     grid-column: 3;
+}
+
+#match-option {
+    grid-row: 3;
+    grid-column: 2;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin: 20px;
+}
+
+.options {
+    font-size: 30px;
 }
 
 .p1-tile,.p2-tile {

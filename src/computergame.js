@@ -252,10 +252,11 @@ function initCompGame(){
 
     ComputerShipPlacer(p2);
 
-    initShipPlacement(p1.gameboard);
+    initShipPlacement(p1);
 }
 
-function initShipPlacement(gameboard){
+function initShipPlacement(player){
+    let gameboard = player.gameboard;
     let gbShip = gameboard.ships;
 
     let p1InfoShips = document.querySelector("#p1-ships");
@@ -273,12 +274,42 @@ function initShipPlacement(gameboard){
             P1TileShipPlacer(gbShip[i],gameboard);
         })
     }
+
+    announcer.textContent = "Click on a ship to place them of the board";
+
+    let matchOption = document.querySelector("#match-option");
+    let randomPlace = document.createElement('button');
+    randomPlace.textContent = "Place Ships Randomly";
+    randomPlace.setAttribute("id","random-place");
+    randomPlace.classList.add("options");
+
+    randomPlace.addEventListener('click', (e) => {
+        removeShipPlacement(gbShip,gameboard.board);
+        ComputerShipPlacer(player);
+        updateP1ShipPlacement(gameboard.board);
+        if(checkP1BoardSet(gameboard.board)){
+            initStartGame();
+        }else{
+            console.log("Missing ships!");
+        };
+    });
+
+    matchOption.appendChild(randomPlace);
+
 }
 
 function removeShipPlacement(gbShip, board) {
     board.forEach(element => {
-        if(element.hasShip == gbShip){
-            element.hasShip = false;
+        if(Array.isArray(gbShip)){
+            gbShip.forEach(ship => {
+                if(element.hasShip == ship){
+                    element.hasShip = false;
+                }
+            });
+        }else{
+            if(element.hasShip == gbShip){
+                element.hasShip = false;
+            }
         }
     });
 
@@ -339,6 +370,18 @@ function checkP1BoardSet(board) {
 
 function initStartGame(){
     console.log("Ready to start match!");
+    let matchOption = document.querySelector("#match-option");
+    let beginMatch = document.createElement('button');
+    beginMatch.classList.add("options");
+    beginMatch.setAttribute("id","begin-match");
+    beginMatch.textContent = "Start Game";
+
+    if(document.querySelector("#begin-match")){
+        document.querySelector("#begin-match").remove();
+        matchOption.appendChild(beginMatch);
+    }else{
+        matchOption.appendChild(beginMatch);
+    }
 }
 
 export {initCompGame}
