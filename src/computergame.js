@@ -384,4 +384,4 @@ function initStartGame(){
     }
 }
 
-export {initCompGame}
+export {initCompGame, ComputerShipPlacer, checkP1BoardSet}
