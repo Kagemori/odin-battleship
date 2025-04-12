@@ -113,6 +113,8 @@ function initCompGame(){
     p1.name = prompt("Enter your name","Player");
     let p1gb = p1.gameboard;
     let board = p1gb.board;
+
+    let direction = "x";
     
     P1InfoPlacer(p1);
 
@@ -123,16 +125,14 @@ function initCompGame(){
         P2TileMaker(i);
     }
 
-    initP1ShipPlacement(p1.gameboard);
+    initShipPlacement(p1.gameboard,direction);
 }
 
-function initP1ShipPlacement(p1gameboard){
-    let p1gbShip = p1gameboard.ships;
-    let direction = "x";
-
-    // P1TileShipPlacer(p1gbShip[0],direction,p1gameboard);
+function initShipPlacement(gameboard, direction){
+    let gbShip = gameboard.ships;
 
     let infoSelect = document.querySelectorAll(".info-shipcontainer");
+    let announcer = document.querySelector("#announcer");
 
     console.log(infoSelect);
 
@@ -140,9 +140,23 @@ function initP1ShipPlacement(p1gameboard){
         infoSelect[i].addEventListener('click', (e) => {
             e.preventDefault();
 
-            P1TileShipPlacer(p1gbShip[i],direction,p1gameboard);
+            announcer.textContent = `Placing ${gbShip[i].shipname}`;
+
+            removeShipPlacement(gbShip[i],gameboard.board);
+
+            P1TileShipPlacer(gbShip[i],direction,gameboard);
         })
     }
+}
+
+function removeShipPlacement(gbShip, board) {
+    board.forEach(element => {
+        if(element.hasShip == gbShip){
+            element.hasShip = false;
+        }
+    });
+
+    updateP1ShipPlacement(board);
 }
 
 function updateP1ShipPlacement(board) {
