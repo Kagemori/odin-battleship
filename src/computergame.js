@@ -92,6 +92,71 @@ function P1TileShipPlacer(ship,gameboard){
     }
 }
 
+function ComputerShipPlacer(compPlayer){
+    let ships = compPlayer.gameboard.ships;
+
+    ships.forEach(element => {
+        let placedShip = false;
+        while(placedShip != true){
+            let direction = Math.random() < 0.5 ? "x" : "y";
+            let index = Math.floor(Math.random()*100);
+
+            placedShip = ComputerCheckPlacement(compPlayer,index,direction,element);
+        }
+    });
+}
+
+function ComputerCheckPlacement(compPlayer,i,direction,ship){
+    let gameboard = compPlayer.gameboard;
+    if(direction == "x"){
+        if((i%10)+ship.length > 10){
+            return false;
+        }else{
+            let validPlacement = true;
+            let k = i;
+            for(let j = i; j < i+ship.length; j++){
+                let board = gameboard.board[j];
+                if(board.hasShip != false){
+                    validPlacement = false;
+                }
+            }
+
+            if(validPlacement == true){
+                for(let m = k; m < k+ship.length; m++){
+                    let board = gameboard.board[m];
+                    board.hasShip = ship;
+                }
+            }else{
+                return false;
+            }
+        }
+    }else if(direction == "y"){
+        if((i)+(ship.length*10) > 109){
+            return false;
+        }else{
+            let validPlacement = true;
+            let k = i;
+            
+            for(let j = 0; j < ship.length; j++){
+                let board = gameboard.board[i+(j*10)];
+                if(board.hasShip != false){
+                    validPlacement = false;
+                }
+            }
+
+            if(validPlacement == true){
+                for(let m = 0; m < ship.length; m++){
+                    let board = gameboard.board[k+(m*10)];
+                    board.hasShip = ship;
+                }
+            }else{
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 function P1TileMaker(index,tileinfo){
     let tile = document.createElement('div');
     tile.classList.add("p1-tile");
@@ -184,6 +249,8 @@ function initCompGame(){
         P1TileMaker(i,hasShip);
         P2TileMaker(i);
     }
+
+    ComputerShipPlacer(p2);
 
     initShipPlacement(p1.gameboard);
 }
