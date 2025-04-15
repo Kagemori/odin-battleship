@@ -409,15 +409,26 @@ async function start(){
     let isThereWinner = false;
     let currentTurn = p1;
 
-    // while(isThereWinner != true){
-        console.log("Waiting for Salvo");
-        await placeShots(currentTurn);
-        console.log("Firing Salvo");
-        checkSalvo(p2);
-    // }
+    while(isThereWinner != true){
+        if(currentTurn == p1){
+            console.log("Waiting for Salvo");
+            await placeShots(currentTurn);
+            console.log("Firing Salvo");
+            checkSalvo(p2,p1);
+
+            currentTurn = p2;
+        }else{
+            console.log("Waiting on computer salvo");
+            await placeShots(currentTurn);
+            console.log("Firing Salvo");
+            checkSalvo(p1,p2);
+
+            currentTurn = p1;
+        }
+    }
 }
 
-function checkSalvo(player){
+function checkSalvo(player,currentTurn){
     let board = player.gameboard;
 
     let totalShots = targets.length;
@@ -431,7 +442,13 @@ function checkSalvo(player){
         }
     });
 
-    console.log(`Player Turn: ${shotsHit} Hit, ${totalShots-shotsHit} Miss`);
+    let matchMoves = document.querySelector("#match-moves");
+    let matchHistory = document.createElement('div');
+    matchHistory.textContent = `${currentTurn.name}'s Turn: ${shotsHit} Hit, ${totalShots-shotsHit} Miss || Targets: ${targets}`;
+
+    matchMoves.append(matchHistory);
+
+    targets = [];
 }
 
 function placeShots(player){
@@ -441,7 +458,7 @@ function placeShots(player){
         for(let i = 0; i < p2Board.length;i++){
             p2Board[i].addEventListener('click', (e) => {
                 addTarget(i,checkFireLimit(player));
-                updateTargetTiles();
+                updateTargetTiles("p2");
             })
         }
 
@@ -455,7 +472,22 @@ function placeShots(player){
             fireSalvo.addEventListener('click', resolve, {once: true})
         })
     }else{
+        let fireLimit = checkFireLimit(player);
+        let targetSet = new Set();
 
+        while (targetSet.size < fireLimit){
+            let index = Math.floor(Math.random() * 100);
+            targetSet.add(index);
+            console.log(index);
+            //To add: check if you already shot there in a previous turn
+        }
+
+        console.log(targetSet);
+
+        targets = Array.from(targetSet);
+        updateTargetTiles("p1");
+
+        return Promise.resolve(targets);
     }
 }
 
@@ -481,19 +513,19 @@ function addTarget(index,limit){
     console.log(targets);
 }
 
-function updateTargetTiles(){
-    let p2Board = document.querySelectorAll(".p2-tile");
+function updateTargetTiles(player){
+    let board = document.querySelectorAll(`.${player}-tile`);
     
-    for(let i = 0; i < p2Board.length; i++){
-        let tileInfo = p2Board[i].querySelector('.p2-tileinfo');
+    for(let i = 0; i < board.length; i++){
+        let tileInfo = board[i].querySelector(`.${player}-tileinfo`);
         if(tileInfo){
             tileInfo.remove();
         }
         if(targets.includes(i)){
-            let p2TileInfo = document.createElement("div");
-            p2TileInfo.textContent = "X";
-            p2TileInfo.classList.add("p2-tileinfo");
-            p2Board[i].appendChild(p2TileInfo);
+            let pTileInfo = document.createElement("div");
+            pTileInfo.textContent = "X";
+            pTileInfo.classList.add(`${player}-tileinfo`);
+            board[i].appendChild(pTileInfo);
         }
     }
 }

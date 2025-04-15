@@ -13,7 +13,7 @@ header {
 #game {
     display: grid;
     grid-template-columns: 1fr 5fr 1fr;
-    grid-template-rows: 0.1fr 1fr 0.1fr;
+    grid-template-rows: 0.1fr 1fr 0.1fr 1fr;
 
     align-items: center;
 }
@@ -108,4 +108,11 @@ header {
     text-align: center;
     min-height: 40px;
     max-width: 40px;
+}
+
+#match-moves {
+    grid-row: 4;
+    grid-column: 2;
+    text-align: center;
+    align-self: start;
 }
