@@ -1,7 +1,11 @@
 import { Player } from "./player.js";
+import { receiveAttack } from "./gameboard.js";
 
 let p1Board = document.querySelector("#p1-gameboard");
 let p2Board = document.querySelector("#p2-gameboard");
+let p1 = new Player();
+let p2 = new Player();
+let targets = [];
 
 function P1TileShipPlacer(ship,gameboard){
     let p1Tiles = document.querySelectorAll("div.p1-tile");
@@ -230,13 +234,9 @@ function InfoShipPlacer(inputName,player){
 }
 
 function initCompGame(){
-    let p1 = new Player();
     p1.playerType = "Human";
     p1.name = prompt("Enter your name","Player");
-    let p1gb = p1.gameboard;
-    let board = p1gb.board;
 
-    let p2 = new Player();
     p2.playerType = "Computer";
     p2.name = "Q";
 
@@ -244,7 +244,7 @@ function initCompGame(){
     InfoPlacer(p2);
 
     for(let i = 0; i < 100; i++){
-        let hasShip = board[i].hasShip;
+        let hasShip = "";
 
         P1TileMaker(i,hasShip);
         P2TileMaker(i);
@@ -329,6 +329,8 @@ function updateP1ShipPlacement(board) {
 
         if(typeof hasShip == 'object'){
             hasShip = hasShip.shipname;
+        }else if(hasShip == false){
+            hasShip = "";
         }
 
         P1TileMaker(i,hasShip);
@@ -376,11 +378,123 @@ function initStartGame(){
     beginMatch.setAttribute("id","begin-match");
     beginMatch.textContent = "Start Game";
 
+    beginMatch.addEventListener('click', (e) => {
+        let clearPlaceOptions = document.querySelector("button.info-changeDir");
+        if(clearPlaceOptions){
+            clearPlaceOptions.remove();
+        }
+
+        let randomPlace = document.querySelector("#random-place");
+        if(randomPlace){
+            randomPlace.remove();
+        }
+
+        let beginMatchButton = document.querySelector("#begin-match");
+        if(beginMatchButton){
+            beginMatchButton.remove();
+        }
+
+        start();
+    })
+
     if(document.querySelector("#begin-match")){
         document.querySelector("#begin-match").remove();
         matchOption.appendChild(beginMatch);
     }else{
         matchOption.appendChild(beginMatch);
+    }
+}
+
+async function start(){
+    let isThereWinner = false;
+    let currentTurn = p1;
+
+    // while(isThereWinner != true){
+        console.log("Waiting for Salvo");
+        await placeShots(currentTurn);
+        console.log("Firing Salvo");
+        checkSalvo(p2);
+    // }
+}
+
+function checkSalvo(player){
+    let board = player.gameboard;
+
+    let totalShots = targets.length;
+    let shotsHit = 0;
+
+    targets.forEach(element => {
+        board.receiveAttack(element);
+        console.log(board.receiveAttack(element));
+        if(board.receiveAttack(element) == true){
+            shotsHit++;
+        }
+    });
+
+    console.log(`Player Turn: ${shotsHit} Hit, ${totalShots-shotsHit} Miss`);
+}
+
+function placeShots(player){
+    if(player == p1){
+        let p2Board = document.querySelectorAll(".p2-tile");
+
+        for(let i = 0; i < p2Board.length;i++){
+            p2Board[i].addEventListener('click', (e) => {
+                addTarget(i,checkFireLimit(player));
+                updateTargetTiles();
+            })
+        }
+
+        let matchOption = document.querySelector("#match-option");
+        let fireSalvo = document.createElement('button');
+        fireSalvo.setAttribute("id","fire-salvo");
+        fireSalvo.textContent = "FIRE!!!";
+        matchOption.appendChild(fireSalvo);
+
+        return new Promise((resolve) => {
+            fireSalvo.addEventListener('click', resolve, {once: true})
+        })
+    }else{
+
+    }
+}
+
+function checkFireLimit(player){
+    let ships = player.gameboard.ships;
+    let limit = 0;
+    ships.forEach(element => {
+        if(element.sunk == false){
+            limit++;
+        }
+    });
+    return limit;
+}
+
+function addTarget(index,limit){
+    console.log(`Fire limit: ${limit}`);
+    if(!targets.includes(index)){
+        targets.push(index);
+        if(targets.length > limit){
+            targets.shift();
+        }
+    }
+    console.log(targets);
+}
+
+function updateTargetTiles(){
+    let p2Board = document.querySelectorAll(".p2-tile");
+    
+    for(let i = 0; i < p2Board.length; i++){
+        let tileInfo = p2Board[i].querySelector('.p2-tileinfo');
+        if(tileInfo){
+            tileInfo.remove();
+        }
+        if(targets.includes(i)){
+            let p2TileInfo = document.createElement("div");
+            p2TileInfo.textContent = "X";
+            p2TileInfo.classList.add("p2-tileinfo");
+            p2Board[i].appendChild(p2TileInfo);
+        }
     }
 }
 

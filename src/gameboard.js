@@ -28,10 +28,12 @@ class Gameboard{
         let tile = this.board[indexCoord];
         let ship = tile.hasShip;
         if(ship != false){
-            ship.hit();
             tile.wasShot = true;
+            ship.hit();
+            return true;
         }else{
             tile.wasShot = true;
+            return false;
         }
     }
 
