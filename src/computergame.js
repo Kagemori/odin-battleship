@@ -201,13 +201,13 @@ function InfoPlacer(player){
         let p1Ships = document.querySelector("#p1-ships");
         let shipHealth = p1Ships.querySelectorAll(`.info-shiphealth`);
         for(let i = 0; i < ships.length; i++) {
-            shipHealth[i].textContent = `${(ships[i].length - ships[i].sunk)} / ${ships[i].length}`;
+            shipHealth[i].textContent = `${(ships[i].length - ships[i].hits)} / ${ships[i].length}`;
         }
     }else{
         let p1Ships = document.querySelector("#p2-ships");
         let shipHealth = p1Ships.querySelectorAll(`.info-shiphealth`);
         for(let i = 0; i < ships.length; i++) {
-            shipHealth[i].textContent = `? / ${ships[i].length}`;
+            shipHealth[i].textContent = `${(ships[i].length - ships[i].hits)} / ${ships[i].length}`;
         }
     }
 }
@@ -409,12 +409,14 @@ async function start(){
     let isThereWinner = false;
     let currentTurn = p1;
 
-    while(isThereWinner != true){
+    while(isThereWinner == false){
         if(currentTurn == p1){
             console.log("Waiting for Salvo");
             await placeShots(currentTurn);
             console.log("Firing Salvo");
             checkSalvo(p2,p1);
+            convertShots("p2");
+            shipHealthUpdate(p2);
 
             currentTurn = p2;
         }else{
@@ -422,8 +424,55 @@ async function start(){
             await placeShots(currentTurn);
             console.log("Firing Salvo");
             checkSalvo(p1,p2);
+            convertShots("p1");
+            shipHealthUpdate(p1);
 
             currentTurn = p1;
+        }
+
+        let playerLose = checkFireLimit(p1);
+        let computerLose = checkFireLimit(p2);
+
+        if(playerLose == 0){
+            isThereWinner = p2;
+        }else if(computerLose == 0){
+            isThereWinner = p1;
+        }
+    }
+
+    declareWinner(isThereWinner);
+}
+
+function declareWinner(winningPlayer){
+    let announcer = document.querySelector("#announcer");
+    announcer.textContent = `${winningPlayer.name} Wins!`;
+
+    let followUp = document.createElement("div");
+
+    if(winningPlayer == p1){
+        followUp.textContent = "Congrats! You gamed B)";
+    }else if(winningPlayer == p2){
+        followUp.textContent = "Better luck next time! D:";
+    }
+}
+
+function shipHealthUpdate(player){
+    if(player == p1){
+        let gameboard = player.gameboard;
+        let ships = gameboard.ships;
+        
+        let p1Ships = document.querySelector("#p1-ships");
+        let shipHealth = p1Ships.querySelectorAll(`.info-shiphealth`);
+        for(let i = 0; i < ships.length; i++) {
+           shipHealth[i].textContent = `${(ships[i].length - ships[i].hits)} / ${ships[i].length}`;
+        }
+    }else{
+        let gameboard = player.gameboard;
+        let ships = gameboard.ships;
+        let p1Ships = document.querySelector("#p2-ships");
+        let shipHealth = p1Ships.querySelectorAll(`.info-shiphealth`);
+        for(let i = 0; i < ships.length; i++) {
+            shipHealth[i].textContent = `${(ships[i].length - ships[i].hits)} / ${ships[i].length}`;
         }
     }
 }
@@ -435,18 +484,21 @@ function checkSalvo(player,currentTurn){
     let shotsHit = 0;
 
     targets.forEach(element => {
-        board.receiveAttack(element);
-        console.log(board.receiveAttack(element));
         if(board.receiveAttack(element) == true){
             shotsHit++;
         }
     });
 
-    let matchMoves = document.querySelector("#match-moves");
     let matchHistory = document.createElement('div');
     matchHistory.textContent = `${currentTurn.name}'s Turn: ${shotsHit} Hit, ${totalShots-shotsHit} Miss || Targets: ${targets}`;
 
-    matchMoves.append(matchHistory);
+    if(currentTurn == p1) {
+        let matchMoves = document.querySelector("#player-moves");
+        matchMoves.append(matchHistory);
+    }else{
+        let matchMoves = document.querySelector("#computer-moves");
+        matchMoves.append(matchHistory);
+    }
 
     targets = [];
 }
@@ -463,14 +515,30 @@ function placeShots(player){
         }
 
         let matchOption = document.querySelector("#match-option");
-        let fireSalvo = document.createElement('button');
-        fireSalvo.setAttribute("id","fire-salvo");
-        fireSalvo.textContent = "FIRE!!!";
-        matchOption.appendChild(fireSalvo);
+        let checkFireButton = document.querySelector("#fire-salvo");
 
-        return new Promise((resolve) => {
-            fireSalvo.addEventListener('click', resolve, {once: true})
-        })
+        if(!checkFireButton){
+            let fireSalvo = document.createElement('button');
+            fireSalvo.setAttribute("id","fire-salvo");
+            fireSalvo.textContent = "FIRE!!!";
+            matchOption.appendChild(fireSalvo);
+
+            return new Promise((resolve) => {
+                fireSalvo.addEventListener('click', resolve, {once: true})
+            })
+        }else{
+            checkFireButton.remove();
+
+            let fireSalvo = document.createElement('button');
+            fireSalvo.setAttribute("id","fire-salvo");
+            fireSalvo.textContent = "FIRE!!!";
+            matchOption.appendChild(fireSalvo);
+
+            return new Promise((resolve) => {
+                fireSalvo.addEventListener('click', resolve, {once: true})
+            })
+        }
+        
     }else{
         let fireLimit = checkFireLimit(player);
         let targetSet = new Set();
@@ -498,6 +566,7 @@ function checkFireLimit(player){
         if(element.sunk == false){
             limit++;
         }
+        console.log(ships);
     });
     return limit;
 }
@@ -513,19 +582,42 @@ function addTarget(index,limit){
     console.log(targets);
 }
 
+function convertShots(player){
+    let board = document.querySelectorAll(`.${player}-tile`);
+
+    for(let i = 0; i < board.length; i++){
+        let tileInfo = board[i].querySelector(`.${player}-tileshotinfo`);
+        if(tileInfo && tileInfo.textContent == "X"){
+            tileInfo.textContent = "O";
+            tileInfo.classList.remove("priming-shot");
+        }
+    }
+}
+
 function updateTargetTiles(player){
     let board = document.querySelectorAll(`.${player}-tile`);
     
     for(let i = 0; i < board.length; i++){
-        let tileInfo = board[i].querySelector(`.${player}-tileinfo`);
-        if(tileInfo){
+        let tileInfo = board[i].querySelector(`.${player}-tileshotinfo`);
+        if(tileInfo && tileInfo.textContent == "X"){
             tileInfo.remove();
-        }
-        if(targets.includes(i)){
-            let pTileInfo = document.createElement("div");
-            pTileInfo.textContent = "X";
-            pTileInfo.classList.add(`${player}-tileinfo`);
-            board[i].appendChild(pTileInfo);
+            if(targets.includes(i)){
+                let pTileInfo = document.createElement("div");
+                pTileInfo.textContent = "X";
+                pTileInfo.classList.add("priming-shot");
+                pTileInfo.classList.add(`${player}-tileshotinfo`);
+                board[i].appendChild(pTileInfo);
+            }
+        }else if(tileInfo && tileInfo.textContent == "O"){
+
+        }else{
+            if(targets.includes(i)){
+                let pTileInfo = document.createElement("div");
+                pTileInfo.textContent = "X";
+                pTileInfo.classList.add("priming-shot");
+                pTileInfo.classList.add(`${player}-tileshotinfo`);
+                board[i].appendChild(pTileInfo);
+            }
         }
     }
 }

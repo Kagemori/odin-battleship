@@ -75,16 +75,18 @@ header {
 }
 
 #p1-gameboard {
-    display: grid;
-    grid-template-columns: repeat(10,1fr);
-    grid-template-rows: repeat(10,1fr);
+    display: flex;
+    flex-wrap: wrap;
+    /* grid-template-columns: repeat(10,1fr);
+    grid-template-rows: repeat(10,1fr); */
     grid-column: 1;
 }
 
 #p2-gameboard {
-    display: grid;
-    grid-template-columns: repeat(10,1fr);
-    grid-template-rows: repeat(10,1fr);
+    display: flex;
+    flex-wrap: wrap;
+    /* grid-template-columns: repeat(10,1fr);
+    grid-template-rows: repeat(10,1fr); */
     grid-column: 3;
 }
 
@@ -106,8 +108,17 @@ header {
 .p1-tile,.p2-tile {
     border: 1px solid black;
     text-align: center;
-    min-height: 40px;
-    max-width: 40px;
+    width:10%;
+    aspect-ratio: 1/1;
+    box-sizing: border-box;
+}
+
+.p2-tileshotinfo {
+    background-color: aquamarine;
+}
+
+.priming-shot {
+    background-color: darkred;
 }
 
 #match-moves {
@@ -115,4 +126,15 @@ header {
     grid-column: 2;
     text-align: center;
     align-self: start;
+
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#history {
+    width: 100%;
+}
+
+#player-moves, #computer-moves {
+    width: 50%;
 }

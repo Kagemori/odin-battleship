@@ -27,7 +27,7 @@ class Gameboard{
     receiveAttack(indexCoord){
         let tile = this.board[indexCoord];
         let ship = tile.hasShip;
-        if(ship != false){
+        if(ship != false && tile.wasShot != true){
             tile.wasShot = true;
             ship.hit();
             return true;
