@@ -5,15 +5,25 @@ header {
     align-items: center;
 }
 
+#title {
+    font-size: 55px;
+    font-weight: bold;
+}
+
 #menu {
     display: flex;
     flex-direction: column;
 }
 
+#menu button{
+    font-size: 25px;
+    margin: 5px;
+}
+
 #game {
     display: grid;
     grid-template-columns: 1fr 5fr 1fr;
-    grid-template-rows: 0.1fr 1fr 0.1fr 1fr;
+    grid-template-rows: 0.1fr 1fr 0.1fr .1fr;
 
     align-items: center;
 }
@@ -84,6 +94,7 @@ header {
 
 #p2-gameboard {
     display: flex;
+
     flex-wrap: wrap;
     /* grid-template-columns: repeat(10,1fr);
     grid-template-rows: repeat(10,1fr); */
@@ -101,8 +112,13 @@ header {
     margin: 20px;
 }
 
+#fire-salvo {
+    font-size: 30px;
+}
+
 .options {
     font-size: 30px;
+    margin: 10px;
 }
 
 .p1-tile,.p2-tile {
@@ -129,6 +145,8 @@ header {
 
     display: flex;
     flex-wrap: wrap;
+    overflow: auto;
+    height: 400px;
 }
 
 #history {
@@ -137,4 +155,6 @@ header {
 
 #player-moves, #computer-moves {
     width: 50%;
+    flex: 1 1 auto;
+    overflow-y: auto;
 }
