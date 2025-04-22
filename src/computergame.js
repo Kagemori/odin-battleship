@@ -9,6 +9,7 @@ let targets = [];
 
 function P1TileShipPlacer(ship,gameboard){
     let p1Tiles = document.querySelectorAll("div.p1-tile");
+    let p1ShipContainers = document.querySelectorAll("#p1-ships .info-shipcontainer");
     let p1board = gameboard.board;
     let shipDirection = "x";
 
@@ -34,8 +35,13 @@ function P1TileShipPlacer(ship,gameboard){
     }else{
         p1Info.appendChild(changeDirection);
     }
+
+    for(let i = 0; i < p1ShipContainers.length; i++){
+        p1ShipContainers[i].classList.add("clickable-ship");
+    }
     
     for(let i = 0; i < p1Tiles.length; i++){
+        p1Tiles[i].classList.add("clickable-tile");
         p1Tiles[i].addEventListener('click', (e) => {
             e.preventDefault();
     
@@ -393,6 +399,11 @@ function initStartGame(){
         if(beginMatchButton){
             beginMatchButton.remove();
         }
+
+        let p1ShipContainers = document.querySelectorAll("#p1-ships .info-shipcontainer");
+        p1ShipContainers.forEach(element => {
+            element.classList.remove("clickable-ship");
+        });
 
         start();
     })
