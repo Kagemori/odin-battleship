@@ -1,8 +1,16 @@
+body {
+    margin: 0px;
+    background-color: green;
+}
+
 header {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    background-color: aquamarine;
+    box-shadow: 0px 5px 5px black;
 }
 
 #title {
@@ -35,6 +43,8 @@ header {
     text-align: center;
     font-size: 35px;
     font-weight: bold;
+
+    background-color: beige;
 }
 
 #gameboard-containers{
@@ -49,6 +59,14 @@ header {
 #p1-info, #p2-info {
     display: flex;
     flex-direction: column;
+
+    background-color: seagreen;
+
+    border-radius: 5px;
+    border: 2px solid black;
+    margin: 15px;
+
+    color: white;
 }
 
 #p1-info {
@@ -67,11 +85,13 @@ header {
 
 #p1-name, #p2-name {
     font-size: 40px;
+    margin: 15px 0px;
 }
 
 #p1-ships, #p2-ships {
     display: flex;
     flex-direction: column;
+    margin: 15px 0px;
 }
 
 .p1-tileinfo {
@@ -90,6 +110,8 @@ header {
     /* grid-template-columns: repeat(10,1fr);
     grid-template-rows: repeat(10,1fr); */
     grid-column: 1;
+
+    background-color: white;
 }
 
 #p2-gameboard {
@@ -99,6 +121,8 @@ header {
     /* grid-template-columns: repeat(10,1fr);
     grid-template-rows: repeat(10,1fr); */
     grid-column: 3;
+
+    background-color: white;
 }
 
 #match-option {
@@ -127,9 +151,10 @@ header {
     width:10%;
     aspect-ratio: 1/1;
     box-sizing: border-box;
+    border-radius: 5px;
 }
 
-.p2-tileshotinfo {
+.p1-tileshotinfo, .p2-tileshotinfo {
     background-color: aquamarine;
 }
 
